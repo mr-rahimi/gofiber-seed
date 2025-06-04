@@ -1,0 +1,33 @@
+package {{snakeCase moduleName}}
+
+import (
+    "context"
+    "time"
+    
+    "github.com/gofiber/fiber/v2"
+)
+
+// Get{{pascalCase moduleName}} handles GET /{{kebabCase moduleName}}/{id}
+func (h *Handler) Get{{pascalCase moduleName}}(c *fiber.Ctx) error {
+    id := c.Params("id")
+    if id == "" {
+        return c.Status(400).JSON(fiber.Map{
+            "error": "ID parameter is required",
+        })
+    }
+
+    ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+    defer cancel()
+
+    result, err := h.get{{pascalCase moduleName}}UC.Execute(ctx, id)
+    if err != nil {
+        return c.Status(404).JSON(fiber.Map{
+            "error": "{{pascalCase moduleName}} not found",
+            "details": err.Error(),
+        })
+    }
+
+    return c.JSON(fiber.Map{
+        "data": result,
+    })
+}

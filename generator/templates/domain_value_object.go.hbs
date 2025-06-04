@@ -1,0 +1,31 @@
+package value_objects
+
+import (
+    "errors"
+    "strings"
+)
+
+type {{pascalCase moduleName}}Value struct {
+    value string
+}
+
+func New{{pascalCase moduleName}}Value(value string) (*{{pascalCase moduleName}}Value, error) {
+    if strings.TrimSpace(value) == "" {
+        return nil, errors.New("{{camelCase moduleName}} value cannot be empty")
+    }
+    
+    return &{{pascalCase moduleName}}Value{
+        value: strings.TrimSpace(value),
+    }, nil
+}
+
+func (v *{{pascalCase moduleName}}Value) String() string {
+    return v.value
+}
+
+func (v *{{pascalCase moduleName}}Value) Equals(other *{{pascalCase moduleName}}Value) bool {
+    if other == nil {
+        return false
+    }
+    return v.value == other.value
+}

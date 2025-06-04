@@ -1,0 +1,30 @@
+package {{snakeCase moduleName}}
+
+import (
+    "context"
+    "{{getModuleName directoryName}}/applications/deps/repositories"
+)
+
+type Delete{{pascalCase moduleName}}UseCase struct {
+    {{camelCase moduleName}}Repository repositories.{{pascalCase moduleName}}Repository
+}
+
+func NewDelete{{pascalCase moduleName}}UseCase({{camelCase moduleName}}Repository repositories.{{pascalCase moduleName}}Repository) *Delete{{pascalCase moduleName}}UseCase {
+    return &Delete{{pascalCase moduleName}}UseCase{
+        {{camelCase moduleName}}Repository: {{camelCase moduleName}}Repository,
+    }
+}
+
+func (uc *Delete{{pascalCase moduleName}}UseCase) Execute(ctx context.Context, id string) error {
+    // Check if {{camelCase moduleName}} exists
+    existing, err := uc.{{camelCase moduleName}}Repository.GetByID(ctx, id)
+    if err != nil {
+        return err
+    }
+    if existing == nil {
+        return err // {{pascalCase moduleName}} not found
+    }
+
+    // Delete the {{camelCase moduleName}}
+    return uc.{{camelCase moduleName}}Repository.Delete(ctx, id)
+}

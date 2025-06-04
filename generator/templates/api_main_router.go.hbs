@@ -1,0 +1,47 @@
+package api
+
+import (
+	"{{getModuleName directoryName}}/wiring"
+	{{#each modules}}
+	"{{getModuleName ../directoryName}}/api/{{snakeCase this}}"
+	{{/each}}
+
+	"github.com/gofiber/fiber/v2"
+)
+
+func ConfigApiRoutes(app *fiber.App, useCases *wiring.UseCases) {
+	// Health check endpoint
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"status": "ok",
+			"message": "{{pascalCase directoryName}} API is running",
+		})
+	})
+
+	// API version 1
+	v1 := app.Group("/api/v1")
+
+	{{#each modules}}
+	// {{pascalCase this}} routes
+	{{snakeCase this}}.Setup{{pascalCase this}}Routes(v1, useCases)
+	{{/each}}
+
+	// API documentation endpoint
+	app.Get("/api/v1/docs", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"message": "{{pascalCase directoryName}} API Documentation",
+			"version": "1.0.0",
+			"endpoints": map[string]interface{}{
+				{{#each modules}}
+				"{{snakeCase this}}": map[string]string{
+					"GET /api/v1/{{kebabCase this}}":        "List {{snakeCase this}}s",
+					"GET /api/v1/{{kebabCase this}}/:id":    "Get {{snakeCase this}} by ID",
+					"POST /api/v1/{{kebabCase this}}":       "Create new {{snakeCase this}}",
+					"PUT /api/v1/{{kebabCase this}}/:id":    "Update {{snakeCase this}}",
+					"DELETE /api/v1/{{kebabCase this}}/:id": "Delete {{snakeCase this}}",
+				},
+				{{/each}}
+			},
+		})
+	})
+}

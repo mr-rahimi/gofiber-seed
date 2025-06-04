@@ -1,0 +1,37 @@
+package {{snakeCase moduleName}}
+
+import (
+    "context"
+    "time"
+    
+    "{{getModuleName directoryName}}/domain/entities"
+    
+    "github.com/gofiber/fiber/v2"
+)
+
+// Create{{pascalCase moduleName}} handles POST /{{kebabCase moduleName}}
+func (h *Handler) Create{{pascalCase moduleName}}(c *fiber.Ctx) error {
+    var entity entities.{{pascalCase moduleName}}
+    if err := c.BodyParser(&entity); err != nil {
+        return c.Status(400).JSON(fiber.Map{
+            "error":   "Invalid request body",
+            "details": err.Error(),
+        })
+    }
+
+    ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+    defer cancel()
+
+    result, err := h.create{{pascalCase moduleName}}UC.Execute(ctx, &entity)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{
+            "error": "Failed to create {{camelCase moduleName}}",
+            "details": err.Error(),
+        })
+    }
+
+    return c.Status(201).JSON(fiber.Map{
+        "message": "{{pascalCase moduleName}} created successfully",
+        "data":    result,
+    })
+}

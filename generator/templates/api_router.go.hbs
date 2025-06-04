@@ -1,0 +1,18 @@
+package {{snakeCase moduleName}}
+
+import (
+    "{{getModuleName directoryName}}/wiring"
+    "github.com/gofiber/fiber/v2"
+)
+
+func Setup{{pascalCase moduleName}}Routes(router fiber.Router, useCases *wiring.UseCases) {
+    // {{pascalCase moduleName}} handler
+    handler := NewHandler(useCases)
+    
+    // {{pascalCase moduleName}} routes
+    router.Post("/{{kebabCase moduleName}}", handler.Create{{pascalCase moduleName}})
+    router.Get("/{{kebabCase moduleName}}", handler.List{{pascalCase moduleName}})
+    router.Get("/{{kebabCase moduleName}}/:id", handler.Get{{pascalCase moduleName}})
+    router.Put("/{{kebabCase moduleName}}/:id", handler.Update{{pascalCase moduleName}})
+    router.Delete("/{{kebabCase moduleName}}/:id", handler.Delete{{pascalCase moduleName}})
+}

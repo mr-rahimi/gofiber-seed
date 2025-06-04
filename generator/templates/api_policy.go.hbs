@@ -1,0 +1,46 @@
+package {{snakeCase moduleName}}
+
+import (
+    "context"
+    "net/http"
+)
+
+type {{pascalCase moduleName}}Policy struct {
+    // Add policy dependencies here
+}
+
+func New{{pascalCase moduleName}}Policy() *{{pascalCase moduleName}}Policy {
+    return &{{pascalCase moduleName}}Policy{}
+}
+
+// CanCreate checks if user can create {{camelCase moduleName}}
+func (p *{{pascalCase moduleName}}Policy) CanCreate(ctx context.Context, userID string) bool {
+    // TODO: Implement authorization logic
+    return true
+}
+
+// CanRead checks if user can read {{camelCase moduleName}}
+func (p *{{pascalCase moduleName}}Policy) CanRead(ctx context.Context, userID string, {{camelCase moduleName}}ID string) bool {
+    // TODO: Implement authorization logic
+    return true
+}
+
+// CanUpdate checks if user can update {{camelCase moduleName}}
+func (p *{{pascalCase moduleName}}Policy) CanUpdate(ctx context.Context, userID string, {{camelCase moduleName}}ID string) bool {
+    // TODO: Implement authorization logic
+    return true
+}
+
+// CanDelete checks if user can delete {{camelCase moduleName}}
+func (p *{{pascalCase moduleName}}Policy) CanDelete(ctx context.Context, userID string, {{camelCase moduleName}}ID string) bool {
+    // TODO: Implement authorization logic
+    return true
+}
+
+// Middleware wraps HTTP handlers with authorization checks
+func (p *{{pascalCase moduleName}}Policy) Middleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // TODO: Implement middleware logic
+        next.ServeHTTP(w, r)
+    })
+}

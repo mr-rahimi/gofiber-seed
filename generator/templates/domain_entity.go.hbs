@@ -1,0 +1,32 @@
+package entities
+
+import (
+    "time"
+)
+
+type {{pascalCase moduleName}} struct {
+    ID        string    `json:"id" bson:"_id,omitempty"`
+    Name      string    `json:"name" bson:"name"`
+    CreatedAt time.Time `json:"created_at" bson:"created_at"`
+    UpdatedAt time.Time `json:"updated_at" bson:"updated_at"`
+}
+
+func New{{pascalCase moduleName}}(name string) *{{pascalCase moduleName}} {
+    now := time.Now()
+    return &{{pascalCase moduleName}}{
+        Name:      name,
+        CreatedAt: now,
+        UpdatedAt: now,
+    }
+}
+
+// IsValid validates the {{camelCase moduleName}} entity
+func ({{camelCase moduleName}} *{{pascalCase moduleName}}) IsValid() bool {
+    return {{camelCase moduleName}}.Name != ""
+}
+
+// Update updates the {{camelCase moduleName}} fields
+func ({{camelCase moduleName}} *{{pascalCase moduleName}}) Update(name string) {
+    {{camelCase moduleName}}.Name = name
+    {{camelCase moduleName}}.UpdatedAt = time.Now()
+}

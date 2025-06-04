@@ -1,0 +1,25 @@
+package services
+
+import (
+    "errors"
+    "{{getModuleName directoryName}}/domain/entities"
+)
+
+type {{pascalCase moduleName}}DomainService struct {
+    // Add dependencies if needed
+}
+
+func New{{pascalCase moduleName}}DomainService() *{{pascalCase moduleName}}DomainService {
+    return &{{pascalCase moduleName}}DomainService{}
+}
+
+// Validate{{pascalCase moduleName}} validates the {{camelCase moduleName}} entity
+func (s *{{pascalCase moduleName}}DomainService) Validate{{pascalCase moduleName}}({{camelCase moduleName}} *entities.{{pascalCase moduleName}}) error {
+    if !{{camelCase moduleName}}.IsValid() {
+        return errors.New("invalid {{camelCase moduleName}} entity")
+    }
+    
+    // Add more domain-specific validation rules here
+    
+    return nil
+}

@@ -1,0 +1,47 @@
+package {{snakeCase moduleName}}
+
+import (
+    "context"
+    "{{getModuleName directoryName}}/applications/deps/repositories"
+    "{{getModuleName directoryName}}/applications/deps/services"
+    "{{getModuleName directoryName}}/domain/entities"
+    domainServices "{{getModuleName directoryName}}/domain/services"
+)
+
+type Create{{pascalCase moduleName}}UseCase struct {
+    {{camelCase moduleName}}Repository repositories.{{pascalCase moduleName}}Repository
+    idGenerator             services.IDGenerator
+    {{camelCase moduleName}}DomainService *domainServices.{{pascalCase moduleName}}DomainService
+}
+
+func NewCreate{{pascalCase moduleName}}UseCase(
+    {{camelCase moduleName}}Repository repositories.{{pascalCase moduleName}}Repository,
+    idGenerator services.IDGenerator,
+    {{camelCase moduleName}}DomainService *domainServices.{{pascalCase moduleName}}DomainService,
+) *Create{{pascalCase moduleName}}UseCase {
+    return &Create{{pascalCase moduleName}}UseCase{
+        {{camelCase moduleName}}Repository:    {{camelCase moduleName}}Repository,
+        idGenerator:             idGenerator,
+        {{camelCase moduleName}}DomainService: {{camelCase moduleName}}DomainService,
+    }
+}
+
+func (uc *Create{{pascalCase moduleName}}UseCase) Execute(ctx context.Context, {{camelCase moduleName}} *entities.{{pascalCase moduleName}}) (*entities.{{pascalCase moduleName}}, error) {
+    // Generate ID if not provided
+    if {{camelCase moduleName}}.ID == "" {
+        {{camelCase moduleName}}.ID = uc.idGenerator.GenerateID()
+    }
+
+    // Domain validation
+    if err := uc.{{camelCase moduleName}}DomainService.Validate{{pascalCase moduleName}}({{camelCase moduleName}}); err != nil {
+        return nil, err
+    }
+
+    // Create the {{camelCase moduleName}}
+    created{{pascalCase moduleName}}, err := uc.{{camelCase moduleName}}Repository.Create(ctx, {{camelCase moduleName}})
+    if err != nil {
+        return nil, err
+    }
+
+    return created{{pascalCase moduleName}}, nil
+}

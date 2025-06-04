@@ -1,0 +1,24 @@
+{
+  "name": "go-project-generator",
+  "version": "1.0.0",
+  "description": "Code generator for Go project using Clean Architecture",
+  "main": "plopfile.js",
+  "scripts": {
+    "generate": "plop",
+    "seed": "plop seed",
+    "gen:entity": "plop entity",
+    "gen:repository": "plop repository",
+    "gen:service": "plop service"
+  },
+  "keywords": [
+    "go",
+    "generator",
+    "clean-architecture",
+    "plop"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "plop": "^4.0.1"
+  }
+}

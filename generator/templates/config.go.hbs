@@ -1,0 +1,72 @@
+package config
+
+import (
+	"os"
+	"strconv"
+	"time"
+)
+
+type Config struct {
+	Server   ServerConfig
+	JWT      JWTConfig
+	External ExternalConfig
+}
+
+type ServerConfig struct {
+	Port         string
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+}
+
+type JWTConfig struct {
+	SecretKey string
+	ExpiresIn time.Duration
+}
+
+type ExternalConfig struct {
+	APIURL string
+	APIKey string
+}
+
+func LoadConfig() *Config {
+	return &Config{
+		Server: ServerConfig{
+			Port:         getEnv("PORT", "8080"),
+			ReadTimeout:  getDurationEnv("SERVER_READ_TIMEOUT", 30*time.Second),
+			WriteTimeout: getDurationEnv("SERVER_WRITE_TIMEOUT", 30*time.Second),
+		},
+		JWT: JWTConfig{
+			SecretKey: getEnv("JWT_SECRET_KEY", "your-secret-key-here"),
+			ExpiresIn: getDurationEnv("JWT_EXPIRES_IN", 24*time.Hour),
+		},
+		External: ExternalConfig{
+			APIURL: getEnv("EXTERNAL_API_URL", "https://api.example.com"),
+			APIKey: getEnv("EXTERNAL_API_KEY", ""),
+		},
+	}
+}
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+func getIntEnv(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		if intValue, err := strconv.Atoi(value); err == nil {
+			return intValue
+		}
+	}
+	return defaultValue
+}
+
+func getDurationEnv(key string, defaultValue time.Duration) time.Duration {
+	if value := os.Getenv(key); value != "" {
+		if duration, err := time.ParseDuration(value); err == nil {
+			return duration
+		}
+	}
+	return defaultValue
+}

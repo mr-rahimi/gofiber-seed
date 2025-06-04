@@ -1,0 +1,21 @@
+package {{snakeCase moduleName}}
+
+import (
+    "context"
+    "{{getModuleName directoryName}}/domain/entities"
+    "{{getModuleName directoryName}}/applications/deps/repositories"
+)
+
+type List{{pascalCase moduleName}}UseCase struct {
+    {{camelCase moduleName}}Repository repositories.{{pascalCase moduleName}}Repository
+}
+
+func NewList{{pascalCase moduleName}}UseCase({{camelCase moduleName}}Repository repositories.{{pascalCase moduleName}}Repository) *List{{pascalCase moduleName}}UseCase {
+    return &List{{pascalCase moduleName}}UseCase{
+        {{camelCase moduleName}}Repository: {{camelCase moduleName}}Repository,
+    }
+}
+
+func (uc *List{{pascalCase moduleName}}UseCase) Execute(ctx context.Context) ([]*entities.{{pascalCase moduleName}}, error) {
+    return uc.{{camelCase moduleName}}Repository.List(ctx)
+}

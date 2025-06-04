@@ -1,0 +1,24 @@
+package {{snakeCase moduleName}}
+
+import (
+    "{{getModuleName directoryName}}/applications/{{snakeCase moduleName}}"
+    "{{getModuleName directoryName}}/wiring"
+)
+
+type Handler struct {
+    create{{pascalCase moduleName}}UC *{{snakeCase moduleName}}.Create{{pascalCase moduleName}}UseCase
+    get{{pascalCase moduleName}}UC    *{{snakeCase moduleName}}.Get{{pascalCase moduleName}}UseCase
+    update{{pascalCase moduleName}}UC *{{snakeCase moduleName}}.Update{{pascalCase moduleName}}UseCase
+    delete{{pascalCase moduleName}}UC *{{snakeCase moduleName}}.Delete{{pascalCase moduleName}}UseCase
+    list{{pascalCase moduleName}}UC   *{{snakeCase moduleName}}.List{{pascalCase moduleName}}UseCase
+}
+
+func NewHandler(useCases *wiring.UseCases) *Handler {
+    return &Handler{
+        create{{pascalCase moduleName}}UC: useCases.Create{{pascalCase moduleName}}UseCase,
+        get{{pascalCase moduleName}}UC:    useCases.Get{{pascalCase moduleName}}UseCase,
+        update{{pascalCase moduleName}}UC: useCases.Update{{pascalCase moduleName}}UseCase,
+        delete{{pascalCase moduleName}}UC: useCases.Delete{{pascalCase moduleName}}UseCase,
+        list{{pascalCase moduleName}}UC:   useCases.List{{pascalCase moduleName}}UseCase,
+    }
+}

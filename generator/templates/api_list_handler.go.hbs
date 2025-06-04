@@ -1,0 +1,26 @@
+package {{snakeCase moduleName}}
+
+import (
+    "context"
+    "time"
+    
+    "github.com/gofiber/fiber/v2"
+)
+
+// List{{pascalCase moduleName}} handles GET /{{kebabCase moduleName}}
+func (h *Handler) List{{pascalCase moduleName}}(c *fiber.Ctx) error {
+    ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+    defer cancel()
+
+    results, err := h.list{{pascalCase moduleName}}UC.Execute(ctx)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{
+            "error": "Failed to retrieve {{camelCase moduleName}}s",
+            "details": err.Error(),
+        })
+    }
+
+    return c.JSON(fiber.Map{
+        "data": results,
+    })
+}

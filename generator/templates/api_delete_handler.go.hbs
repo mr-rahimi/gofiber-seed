@@ -1,0 +1,33 @@
+package {{snakeCase moduleName}}
+
+import (
+    "context"
+    "time"
+    
+    "github.com/gofiber/fiber/v2"
+)
+
+// Delete{{pascalCase moduleName}} handles DELETE /{{kebabCase moduleName}}/{id}
+func (h *Handler) Delete{{pascalCase moduleName}}(c *fiber.Ctx) error {
+    id := c.Params("id")
+    if id == "" {
+        return c.Status(400).JSON(fiber.Map{
+            "error": "ID parameter is required",
+        })
+    }
+
+    ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+    defer cancel()
+
+    err := h.delete{{pascalCase moduleName}}UC.Execute(ctx, id)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{
+            "error": "Failed to delete {{camelCase moduleName}}",
+            "details": err.Error(),
+        })
+    }
+
+    return c.JSON(fiber.Map{
+        "message": "{{pascalCase moduleName}} deleted successfully",
+    })
+}

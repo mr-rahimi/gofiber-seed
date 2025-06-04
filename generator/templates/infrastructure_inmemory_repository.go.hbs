@@ -1,0 +1,95 @@
+package inMemoryRepositories
+
+import (
+    "context"
+    "errors"
+    "fmt"
+    "sync"
+    "time"
+    "{{getModuleName directoryName}}/domain/entities"
+    "{{getModuleName directoryName}}/applications/deps/repositories"
+)
+
+type InMemory{{pascalCase moduleName}}Repository struct {
+    data map[string]*entities.{{pascalCase moduleName}}
+    mu   sync.RWMutex
+}
+
+func New{{pascalCase moduleName}}Repository() repositories.{{pascalCase moduleName}}Repository {
+    return &InMemory{{pascalCase moduleName}}Repository{
+        data: make(map[string]*entities.{{pascalCase moduleName}}),
+    }
+}
+
+func (r *InMemory{{pascalCase moduleName}}Repository) Create(ctx context.Context, {{camelCase moduleName}} *entities.{{pascalCase moduleName}}) (*entities.{{pascalCase moduleName}}, error) {
+    r.mu.Lock()
+    defer r.mu.Unlock()
+    
+    // Generate ID if not provided
+    if {{camelCase moduleName}}.ID == "" {
+        {{camelCase moduleName}}.ID = r.generateID()
+    }
+    
+    // Set timestamps
+    {{camelCase moduleName}}.CreatedAt = time.Now()
+    {{camelCase moduleName}}.UpdatedAt = time.Now()
+    
+    r.data[{{camelCase moduleName}}.ID] = {{camelCase moduleName}}
+    return {{camelCase moduleName}}, nil
+}
+
+func (r *InMemory{{pascalCase moduleName}}Repository) GetByID(ctx context.Context, id string) (*entities.{{pascalCase moduleName}}, error) {
+    r.mu.RLock()
+    defer r.mu.RUnlock()
+    
+    {{camelCase moduleName}}, exists := r.data[id]
+    if !exists {
+        return nil, errors.New("{{camelCase moduleName}} not found")
+    }
+    
+    return {{camelCase moduleName}}, nil
+}
+
+func (r *InMemory{{pascalCase moduleName}}Repository) List(ctx context.Context) ([]*entities.{{pascalCase moduleName}}, error) {
+    r.mu.RLock()
+    defer r.mu.RUnlock()
+    
+    result := make([]*entities.{{pascalCase moduleName}}, 0, len(r.data))
+    for _, {{camelCase moduleName}} := range r.data {
+        result = append(result, {{camelCase moduleName}})
+    }
+    
+    return result, nil
+}
+
+func (r *InMemory{{pascalCase moduleName}}Repository) Update(ctx context.Context, {{camelCase moduleName}} *entities.{{pascalCase moduleName}}) (*entities.{{pascalCase moduleName}}, error) {
+    r.mu.Lock()
+    defer r.mu.Unlock()
+    
+    if _, exists := r.data[{{camelCase moduleName}}.ID]; !exists {
+        return nil, errors.New("{{camelCase moduleName}} not found")
+    }
+    
+    // Update timestamp
+    {{camelCase moduleName}}.UpdatedAt = time.Now()
+    
+    r.data[{{camelCase moduleName}}.ID] = {{camelCase moduleName}}
+    return {{camelCase moduleName}}, nil
+}
+
+func (r *InMemory{{pascalCase moduleName}}Repository) Delete(ctx context.Context, id string) error {
+    r.mu.Lock()
+    defer r.mu.Unlock()
+    
+    if _, exists := r.data[id]; !exists {
+        return errors.New("{{camelCase moduleName}} not found")
+    }
+    
+    delete(r.data, id)
+    return nil
+}
+
+// generateID generates a simple ID
+func (r *InMemory{{pascalCase moduleName}}Repository) generateID() string {
+    return fmt.Sprintf("{{snakeCase moduleName}}_%d", time.Now().UnixNano())
+}

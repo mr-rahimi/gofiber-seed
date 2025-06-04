@@ -1,0 +1,47 @@
+package {{snakeCase moduleName}}
+
+import (
+    "context"
+    "{{getModuleName directoryName}}/applications/deps/repositories"
+    "{{getModuleName directoryName}}/domain/entities"
+    domainServices "{{getModuleName directoryName}}/domain/services"
+)
+
+type Update{{pascalCase moduleName}}UseCase struct {
+    {{camelCase moduleName}}Repository repositories.{{pascalCase moduleName}}Repository
+    {{camelCase moduleName}}DomainService *domainServices.{{pascalCase moduleName}}DomainService
+}
+
+func NewUpdate{{pascalCase moduleName}}UseCase(
+    {{camelCase moduleName}}Repository repositories.{{pascalCase moduleName}}Repository,
+    {{camelCase moduleName}}DomainService *domainServices.{{pascalCase moduleName}}DomainService,
+) *Update{{pascalCase moduleName}}UseCase {
+    return &Update{{pascalCase moduleName}}UseCase{
+        {{camelCase moduleName}}Repository:    {{camelCase moduleName}}Repository,
+        {{camelCase moduleName}}DomainService: {{camelCase moduleName}}DomainService,
+    }
+}
+
+func (uc *Update{{pascalCase moduleName}}UseCase) Execute(ctx context.Context, {{camelCase moduleName}} *entities.{{pascalCase moduleName}}) (*entities.{{pascalCase moduleName}}, error) {
+    // Check if {{camelCase moduleName}} exists
+    existing, err := uc.{{camelCase moduleName}}Repository.GetByID(ctx, {{camelCase moduleName}}.ID)
+    if err != nil {
+        return nil, err
+    }
+    if existing == nil {
+        return nil, err // {{pascalCase moduleName}} not found
+    }
+
+    // Domain validation
+    if err := uc.{{camelCase moduleName}}DomainService.Validate{{pascalCase moduleName}}({{camelCase moduleName}}); err != nil {
+        return nil, err
+    }
+
+    // Update the {{camelCase moduleName}}
+    updated{{pascalCase moduleName}}, err := uc.{{camelCase moduleName}}Repository.Update(ctx, {{camelCase moduleName}})
+    if err != nil {
+        return nil, err
+    }
+
+    return updated{{pascalCase moduleName}}, nil
+}

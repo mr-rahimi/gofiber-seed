@@ -1,0 +1,16 @@
+package repositories
+
+import (
+    "context"
+    "{{getModuleName directoryName}}/domain/entities"
+)
+
+{{#each modules}}
+type {{pascalCase this}}Repository interface {
+    Create(ctx context.Context, {{camelCase this}} *entities.{{pascalCase this}}) (*entities.{{pascalCase this}}, error)
+    GetByID(ctx context.Context, id string) (*entities.{{pascalCase this}}, error)
+    Update(ctx context.Context, {{camelCase this}} *entities.{{pascalCase this}}) (*entities.{{pascalCase this}}, error)
+    Delete(ctx context.Context, id string) error
+    List(ctx context.Context) ([]*entities.{{pascalCase this}}, error)
+}
+{{/each}}

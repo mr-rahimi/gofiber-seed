@@ -1,0 +1,29 @@
+package {{snakeCase moduleName}}
+
+import (
+    "context"
+    "{{getModuleName directoryName}}/applications/deps/repositories"
+    "{{getModuleName directoryName}}/domain/entities"
+)
+
+type Get{{pascalCase moduleName}}UseCase struct {
+    {{camelCase moduleName}}Repository repositories.{{pascalCase moduleName}}Repository
+}
+
+func NewGet{{pascalCase moduleName}}UseCase(
+    {{camelCase moduleName}}Repository repositories.{{pascalCase moduleName}}Repository,
+) *Get{{pascalCase moduleName}}UseCase {
+    return &Get{{pascalCase moduleName}}UseCase{
+        {{camelCase moduleName}}Repository: {{camelCase moduleName}}Repository,
+    }
+}
+
+func (uc *Get{{pascalCase moduleName}}UseCase) Execute(ctx context.Context, id string) (*entities.{{pascalCase moduleName}}, error) {
+    // Get from repository
+    {{camelCase moduleName}}, err := uc.{{camelCase moduleName}}Repository.GetByID(ctx, id)
+    if err != nil {
+        return nil, err
+    }
+
+    return {{camelCase moduleName}}, nil
+}

@@ -1,0 +1,84 @@
+package wiring
+
+import (
+	"{{getModuleName directoryName}}/applications/deps/repositories"
+	"{{getModuleName directoryName}}/applications/deps/services"
+	{{#each modules}}
+	"{{getModuleName ../directoryName}}/applications/{{snakeCase this}}"
+	{{/each}}
+	domainServices "{{getModuleName directoryName}}/domain/services"
+	"{{getModuleName directoryName}}/infrastructure/inMemoryRepositories"
+	"{{getModuleName directoryName}}/infrastructure/utilityServices"
+)
+
+type UseCases struct {
+	{{#each modules}}
+	Create{{pascalCase this}}UseCase *{{snakeCase this}}.Create{{pascalCase this}}UseCase
+	Get{{pascalCase this}}UseCase    *{{snakeCase this}}.Get{{pascalCase this}}UseCase
+	Update{{pascalCase this}}UseCase *{{snakeCase this}}.Update{{pascalCase this}}UseCase
+	Delete{{pascalCase this}}UseCase *{{snakeCase this}}.Delete{{pascalCase this}}UseCase
+	List{{pascalCase this}}UseCase   *{{snakeCase this}}.List{{pascalCase this}}UseCase
+	{{/each}}
+}
+
+type Repositories struct {
+	{{#each modules}}
+	{{pascalCase this}}Repository repositories.{{pascalCase this}}Repository
+	{{/each}}
+}
+
+type Services struct {
+	IDGenerator        services.IDGenerator
+}
+
+type DomainServices struct {
+	{{#each modules}}
+	{{pascalCase this}}DomainService *domainServices.{{pascalCase this}}DomainService
+	{{/each}}
+}
+
+func SetupUseCases() (*UseCases, error) {
+	// Setup repositories (using in-memory)
+	repos := &Repositories{
+		{{#each modules}}
+		{{pascalCase this}}Repository: inMemoryRepositories.New{{pascalCase this}}Repository(),
+		{{/each}}
+	}
+
+	// Setup infrastructure services
+	services := &Services{
+		IDGenerator:        utilityServices.NewUUIDGenerator(),
+	}
+
+	// Setup domain services
+	domainServices := &DomainServices{
+		{{#each modules}}
+		{{pascalCase this}}DomainService: domainServices.New{{pascalCase this}}DomainService(),
+		{{/each}}
+	}
+
+	// Setup use cases
+	useCases := &UseCases{
+		{{#each modules}}
+		Create{{pascalCase this}}UseCase: {{snakeCase this}}.NewCreate{{pascalCase this}}UseCase(
+			repos.{{pascalCase this}}Repository,
+			services.IDGenerator,
+			domainServices.{{pascalCase this}}DomainService,
+		),
+		Get{{pascalCase this}}UseCase: {{snakeCase this}}.NewGet{{pascalCase this}}UseCase(
+			repos.{{pascalCase this}}Repository,
+		),
+		Update{{pascalCase this}}UseCase: {{snakeCase this}}.NewUpdate{{pascalCase this}}UseCase(
+			repos.{{pascalCase this}}Repository,
+			domainServices.{{pascalCase this}}DomainService,
+		),
+		Delete{{pascalCase this}}UseCase: {{snakeCase this}}.NewDelete{{pascalCase this}}UseCase(
+			repos.{{pascalCase this}}Repository,
+		),
+		List{{pascalCase this}}UseCase: {{snakeCase this}}.NewList{{pascalCase this}}UseCase(
+			repos.{{pascalCase this}}Repository,
+		),
+		{{/each}}
+	}
+	return useCases, nil
+}
